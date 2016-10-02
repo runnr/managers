@@ -7,7 +7,7 @@ function createManager({ stages, nonCriticalStages = [] }) {
 	nonCriticalStages = new Set(nonCriticalStages);
 
 	let stageIndex = 0;
-	let stageError = false;
+	let stageError = null;
 	let nextStage = Promise.resolve();
 
 	const runningHandlers = new PromiseQueue();
@@ -32,20 +32,23 @@ function createManager({ stages, nonCriticalStages = [] }) {
 
 		if(isStartOfStage)
 			nextStage = Promise.all([index === 0 ? Promise.resolve() : nextStage, runningHandlers.onEmpty]).then(() => {
-				if(!stageError) {
+				if(stageError === null) {
 					stageIndex = index + 1;
+
 					return;
 				}
 
-				stageError = false;
+				const err = stageError;
+
+				stageError = null;
 				stageIndex = 0;
 
-				throw new StageError("A different job failed to arrive at its next stage.");
+				throw new StageError("A different job failed to arrive at its next stage.", err);
 			});
 
 		return result.then(nextInput => runStageHandlers(stageHandlers, index + 1, nextInput), err => {
 			if(!nonCriticalStages.has(stage))
-				stageError = true;
+				stageError = err;
 
 			throw err;
 		});
@@ -54,7 +57,14 @@ function createManager({ stages, nonCriticalStages = [] }) {
 	return Object.assign(stageHandlers => runStageHandlers(stageHandlers, 0), { StageError });
 }
 
-class StageError extends Error {}
+class StageError extends Error {
+	constructor(msg, cause) {
+		super(msg);
+
+		this.cause = cause;
+		this.stack = `${this.stack}\n\nCause: ${this.cause.stack}`;
+	}
+}
 
 StageError.prototype.name = "StageError";
 
