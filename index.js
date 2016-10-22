@@ -3,7 +3,7 @@
 module.exports = {
 	taskManager: require("./taskManager")(),
 	stageManager: require("./stageManager")({
-		stages: ["setMetadata", "assignGraph", "validatePlugin", "activateRunner"],
+		stages: ["setMetadata", "initializeDatabase", "assignGraph", "validatePlugin", "activateRunner"],
 		nonCriticalStages: ["validatePlugin", "activateRunner"]
 	})
 };
