@@ -2,6 +2,8 @@
 
 const PromiseQueue = require("../helpers/PromiseQueue");
 
+const cancel = Symbol("cancel");
+
 function createManager({ stages, nonCriticalStages = [] }) {
 	stages = Array.from(stages);
 	nonCriticalStages = new Set(nonCriticalStages);
@@ -43,10 +45,15 @@ function createManager({ stages, nonCriticalStages = [] }) {
 				stageError = null;
 				stageIndex = 0;
 
-				throw new StageError("A different job failed to arrive at its next stage.", err);
+				throw new StageError("A different job failed to arrive at its current stage.", err);
 			});
 
-		return result.then(nextInput => runStageHandlers(stageHandlers, index + 1, nextInput), err => {
+		return result.then(nextInput => {
+			if(nextInput === cancel)
+				return cancel;
+
+			return runStageHandlers(stageHandlers, index + 1, nextInput);
+		}, err => {
 			if(!nonCriticalStages.has(stage))
 				stageError = err;
 
@@ -54,7 +61,7 @@ function createManager({ stages, nonCriticalStages = [] }) {
 		});
 	}
 
-	return Object.assign(stageHandlers => runStageHandlers(stageHandlers, 0), { StageError });
+	return Object.assign(stageHandlers => runStageHandlers(stageHandlers, 0), { StageError, cancel });
 }
 
 class StageError extends Error {
@@ -68,6 +75,6 @@ class StageError extends Error {
 
 StageError.prototype.name = "StageError";
 
-createManager.StageError = StageError;
+Object.assign(createManager, { StageError, cancel });
 
 module.exports = createManager;
