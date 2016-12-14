@@ -2,7 +2,7 @@
 
 const owe = require("owe.js");
 
-const generating = require("../helpers/generatingMaps");
+const generating = require("@runnr/helpers").generatingMaps;
 
 /**
  * Creates a task manager with its own id scope.

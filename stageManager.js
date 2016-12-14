@@ -1,6 +1,6 @@
 "use strict";
 
-const PromiseQueue = require("../helpers/PromiseQueue");
+const { PromiseQueue } = require("@runnr/helpers");
 
 const cancel = Symbol("cancel");
 
