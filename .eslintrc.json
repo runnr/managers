@@ -1,0 +1,10 @@
+{
+	"root": true,
+	"extends": "cortys",
+	"rules": {
+		"new-cap": ["warn", {
+			"capIsNewExceptions": ["Mixin", "MixinFactory", "UpdateEmitter", "Dedupe", "Node"],
+			"newIsCapExceptions": ["events"]
+		}]
+	}
+}

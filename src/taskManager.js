@@ -1,7 +1,5 @@
 "use strict";
 
-const owe = require("owe.js");
-
 const generating = require("@runnr/helpers").generatingMaps;
 
 /**
@@ -54,13 +52,13 @@ function createManager() {
 
 		if(tasks.next) {
 			if(intent && tasks.next.intent === intent)
-				return Promise.reject(new owe.exposed.Error(`There already is a scheduled ${intent} task for this item.`));
+				return Promise.reject(new Error(`There already is a scheduled ${intent} task for this item.`));
 
-			tasks.next.promise.reject(new owe.exposed.Error("This task was replaced by another one."));
+			tasks.next.promise.reject(new Error("This task was replaced by another one."));
 		}
 
 		if(intent && tasks.current.intent === intent)
-			return Promise.reject(new owe.exposed.Error(`There already is a running ${intent} task for this item.`));
+			return Promise.reject(new Error(`There already is a running ${intent} task for this item.`));
 
 		tasks.next = { task, intent };
 
