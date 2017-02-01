@@ -21,7 +21,7 @@
 		"@runnr/helpers": "0.1.0"
 	},
 	"devDependencies": {
-		"eslint": "3.12.2",
+		"eslint": "3.14.1",
 		"eslint-config-cortys": "1.x"
 	}
 }
