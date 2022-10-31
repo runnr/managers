@@ -16,7 +16,6 @@
 		"node": "^6.5"
 	},
 	"main": "src/index.js",
-
 	"dependencies": {
 		"@runnr/helpers": "0.1.0"
 	},
